@@ -1,4 +1,4 @@
-##Receptiviti Challenge
+# Receptiviti Challenge
 
 A local commuter railroad services a number of towns in
 Kiwiland.  Because of monetary concerns, all of the tracks are 'one-way.'
@@ -73,6 +73,6 @@ Output #9: 9
 
 Output #10: 7
 
-# Tasks
+### Tasks
 1. Parse input into graph form.
 2. Implement error checking for input. Make sure two cities are not the same in a route. Make sure routes are distinct.
