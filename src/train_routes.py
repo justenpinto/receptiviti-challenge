@@ -10,6 +10,9 @@ TEST_CASE_TYPES = {
     'RouteLessThanDistance': re.compile("^[A-Z]\|[A-Z]\|[0-9]+$")
 }
 
+ROUTE_PATTERN = re.compile("^[A-Z][A-Z][0-9]+$")
+TEST_CASE_PATTERN = re.compile("^([A-Za-z]+):(.+)$")
+
 
 class TestCase:
     def __init__(self, **kwargs):
@@ -22,32 +25,19 @@ class TrainRoutes:
         self.graph_data = kwargs['graph_data']
         if isinstance(self.graph_data, str):
             self.graph_data = self.graph_data.split(',')
-        self.test_case_data = kwargs['test_case_data']
-        if isinstance(self.test_case_data, str):
-            self.test_case_data = self.test_case_data.split(',')
+        self.test_cases = kwargs['test_cases']
 
         self.graph = {}
         self.parse_graph()
-
-        self.test_cases = []
-        self.parse_testcases()
 
     def parse_graph(self):
         arcs = self.graph_data
         self.graph = {}
         for arc in arcs:
-            # Ensure correct formatting of route
-            if len(arc) < 3:
-                raise Exception("Invalid route input: '%s'" % arc)
-
             arc = arc.strip()
             start_city = arc[0]
             end_city = arc[1]
             distance = int(arc[2:])
-
-            # Ensure non-cyclical routes
-            if start_city == end_city:
-                raise Exception("Start and end cities are the same for route: '%s" % arc)
 
             if start_city not in self.graph:
                 self.graph[start_city] = {}
@@ -58,25 +48,11 @@ class TrainRoutes:
 
             self.graph[start_city][end_city] = distance
 
-    def parse_testcases(self):
-        for test_case in self.test_case_data:
-            test_case_name, test_case_args = test_case.split(':')
-
-            if test_case_name not in TEST_CASE_TYPES:
-                raise Exception('Unknown test case: %s' % test_case)
-
-            arg_pattern = TEST_CASE_TYPES[test_case_name]
-
-            if not arg_pattern.match(test_case_args):
-                raise Exception("Invalid arguments for test case: %s" % test_case)
-
-            self.test_cases.append(TestCase(name=test_case_name, args=test_case_args))
-
     def get_distance_for_route(self, route):
         """
         Gets the distance for travelling a route.
 
-        :param route:
+        :param route: a series of cities to visit. Format: A-B-E
         :return:
         """
         cities = route.split('-')
@@ -265,19 +241,52 @@ class TrainRoutes:
             count += 1
             print()
 
+
+def valid_graph_data(route):
+    if ROUTE_PATTERN.match(route):
+        if route[0] == route[1]:
+            raise argparse.ArgumentTypeError('Invalid route format, cannot have same city: %s' % route)
+        return route
+    else:
+        raise argparse.ArgumentTypeError('Invalid route format for: %s. Should be {A-Z}{A-Z}{0-9}+' % route)
+
+
+def valid_test_case(test_case):
+    """
+    Validate function for --testcases command line argument.
+    :param test_case:
+    :return: TestCase object
+    """
+    m = TEST_CASE_PATTERN.match(test_case)
+    if m:
+        test_case_name = m.group(1)
+        if test_case_name not in TEST_CASE_TYPES:
+            raise argparse.ArgumentTypeError('Invalid test case name: %s.' % test_case_name)
+        test_case_args = m.group(2)
+        n = TEST_CASE_TYPES[test_case_name].match(test_case_args)
+        if not n:
+            raise argparse.ArgumentTypeError('Invalid arguments for %s: %s. Please see docs for help.' % (
+                test_case_name, m.group(2)
+            ))
+        return TestCase(name=test_case_name, args=test_case_args)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--graphdata',
                         nargs='+',
                         help='Specify cities and distance as space separated string. E.g. AB5 BC5 CD5',
-                        required=True)
+                        required=True,
+                        type=valid_graph_data)
     parser.add_argument('--testcases',
                         nargs='+',
-                        help='List of test cases to perform. See documentation for formatting.',
-                        required=True)
+                        help='List of test cases to perform. See documentation for formatting. Names: %s'
+                             % ','.join(TEST_CASE_TYPES.keys()),
+                        required=True,
+                        type=valid_test_case)
 
     args = parser.parse_args()
 
     x = TrainRoutes(graph_data=args.graphdata,
-                    test_case_data=args.testcases)
+                    test_cases=args.testcases)
     x.run_test_cases()
