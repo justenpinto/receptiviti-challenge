@@ -4,6 +4,7 @@ import re
 
 TEST_CASE_TYPES = {
     'RouteDistance': re.compile("^[A-Z](-[A-Z])+$"),
+    'RouteShortest': re.compile("^[A-Z]\|[A-Z]$"),
     'RouteLessThanHops': re.compile("^[A-Z]\|[A-Z]\|[0-9]+$"),
     'RouteEqualHops': re.compile("^[A-Z]\|[A-Z]\|[0-9]+$"),
     'RouteLessThanDistance': re.compile("^[A-Z]\|[A-Z]\|[0-9]+$")
@@ -232,9 +233,15 @@ class TrainRoutes:
 
         :return:
         """
+        count = 1
         for test_case in self.test_cases:
+            print("Running test case #%d" % count)
             if test_case.name == 'RouteDistance':
                 print(self.get_distance_for_route(test_case.args))
+            elif test_case.name == 'RouteShortest':
+                args = test_case.args.split('|')
+                shortest_distance = self.find_shortest_path_between_cities(args[0], args[1])
+                print("Shortest distance between %s and %s: %d" % (args[0], args[1], shortest_distance))
             elif test_case.name == 'RouteLessThanHops':
                 args = test_case.args.split('|')
                 paths = self.trips_hop_constraint_bfs(args[0], args[1], int(args[2]))
@@ -255,7 +262,8 @@ class TrainRoutes:
                 ))
             else:
                 raise Exception('Unknown test case: %s' % test_case.name)
-
+            count += 1
+            print()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

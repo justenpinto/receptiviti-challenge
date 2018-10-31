@@ -1,5 +1,7 @@
 # Receptiviti Challenge
 
+## The Problem
+
 A local commuter railroad services a number of towns in
 Kiwiland.  Because of monetary concerns, all of the tracks are 'one-way.'
 That is, a route from Kaitaia to Invercargill does not imply the existence
@@ -73,6 +75,27 @@ Output #9: 9
 
 Output #10: 7
 
-### Tasks
-1. Parse input into graph form.
-2. Implement error checking for input. Make sure two cities are not the same in a route. Make sure routes are distinct.
+## Usage
+Because no input type was defined in the program, all data used in the program is provided as arguments to program.
+
+To see what the arguments are for the program, run the following:
+```buildoutcfg
+python train_routes.py -h
+```
+
+The ```--testcases``` argument is formatted as such: {TestCaseName}:{Args}.
+
+There are four types of test cases:
+
+1. RouteDistance - gets total distance for route. Format: "RouteDistance:A-D-C".
+2. RouteShortest - gets shortest distance between two cities. Format: "RouteShortest:A|C"
+3. RouteLessThanHops - gets all paths with hops less than or equal to. Format: "RouteLessThanHops:C|C|3"
+4. RouteEqualHops - gets all paths with hops equal to specified value. Format: "RouteEqualHops:A|C|4"
+5. RouteLessThanDistance - gets all paths with distance less than specified value (from start_city to end_city). 
+Format: "RouteLessThanDistance:C|C|30".
+
+Here is what should be run to mirror the test cases provided:
+
+```
+train_routes.py --graphdata AB5 BC4 CD8 DC8 DE6 AD5 CE2 EB3 AE7 --testcases RouteDistance:A-B-C RouteDistance:A-D RouteDistance:A-D-C RouteDistance:A-E-B-C-D RouteDistance:A-E-D RouteLessThanHops:C|C|3 RouteEqualHops:A|C|4 RouteShortest:A|C RouteShortest:B|B RouteLessThanDistance:C|C|30
+```
