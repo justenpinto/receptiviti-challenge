@@ -82,6 +82,22 @@ To see what the arguments are for the program, run the following:
 python train_routes.py -h
 ```
 
+This produces the following:
+
+```buildoutcfg
+usage: train_routes.py [-h] --graphdata GRAPHDATA [GRAPHDATA ...] --testcases
+                       TESTCASES [TESTCASES ...]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --graphdata GRAPHDATA [GRAPHDATA ...]
+                        Specify cities and distance as space separated string.
+                        E.g. AB5 BC5 CD5
+  --testcases TESTCASES [TESTCASES ...]
+                        List of test cases to perform. See documentation for
+                        formatting.
+```
+
 The ```--testcases``` argument is formatted as such: {TestCaseName}:{Args}.
 
 There are four types of test cases:
