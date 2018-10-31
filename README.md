@@ -100,7 +100,7 @@ optional arguments:
 
 The ```--testcases``` argument is formatted as such: {TestCaseName}:{Args}.
 
-There are four types of test cases:
+There are five types of test cases:
 
 1. RouteDistance - gets total distance for route. Format: "RouteDistance:A-D-C".
 2. RouteShortest - gets shortest distance between two cities. Format: "RouteShortest:A|C"
