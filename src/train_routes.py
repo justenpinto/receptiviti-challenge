@@ -14,6 +14,40 @@ ROUTE_PATTERN = re.compile("^[A-Z][A-Z][0-9]+$")
 TEST_CASE_PATTERN = re.compile("^([A-Za-z]+):(.+)$")
 
 
+def valid_graph_data(route):
+    """
+    Validate function for --graphdata command line argument.
+    :param route:
+    :return:
+    """
+    if ROUTE_PATTERN.match(route):
+        if route[0] == route[1]:
+            raise argparse.ArgumentTypeError('Invalid route format, cannot have same city: %s' % route)
+        return route
+    else:
+        raise argparse.ArgumentTypeError('Invalid route format for: %s. Should be {A-Z}{A-Z}{0-9}+' % route)
+
+
+def valid_test_case(test_case):
+    """
+    Validate function for --testcases command line argument.
+    :param test_case:
+    :return: TestCase object
+    """
+    m = TEST_CASE_PATTERN.match(test_case)
+    if m:
+        test_case_name = m.group(1)
+        if test_case_name not in TEST_CASE_TYPES:
+            raise argparse.ArgumentTypeError('Invalid test case name: %s.' % test_case_name)
+        test_case_args = m.group(2)
+        n = TEST_CASE_TYPES[test_case_name].match(test_case_args)
+        if not n:
+            raise argparse.ArgumentTypeError('Invalid arguments for %s: %s. Please see docs for help.' % (
+                test_case_name, m.group(2)
+            ))
+        return TestCase(name=test_case_name, args=test_case_args)
+
+
 class TestCase:
     def __init__(self, **kwargs):
         self.name = kwargs['name']
@@ -240,35 +274,6 @@ class TrainRoutes:
                 raise Exception('Unknown test case: %s' % test_case.name)
             count += 1
             print()
-
-
-def valid_graph_data(route):
-    if ROUTE_PATTERN.match(route):
-        if route[0] == route[1]:
-            raise argparse.ArgumentTypeError('Invalid route format, cannot have same city: %s' % route)
-        return route
-    else:
-        raise argparse.ArgumentTypeError('Invalid route format for: %s. Should be {A-Z}{A-Z}{0-9}+' % route)
-
-
-def valid_test_case(test_case):
-    """
-    Validate function for --testcases command line argument.
-    :param test_case:
-    :return: TestCase object
-    """
-    m = TEST_CASE_PATTERN.match(test_case)
-    if m:
-        test_case_name = m.group(1)
-        if test_case_name not in TEST_CASE_TYPES:
-            raise argparse.ArgumentTypeError('Invalid test case name: %s.' % test_case_name)
-        test_case_args = m.group(2)
-        n = TEST_CASE_TYPES[test_case_name].match(test_case_args)
-        if not n:
-            raise argparse.ArgumentTypeError('Invalid arguments for %s: %s. Please see docs for help.' % (
-                test_case_name, m.group(2)
-            ))
-        return TestCase(name=test_case_name, args=test_case_args)
 
 
 if __name__ == '__main__':
