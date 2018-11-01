@@ -14,7 +14,7 @@ ROUTE_PATTERN = re.compile("^[A-Z][A-Z][0-9]+$")
 TEST_CASE_PATTERN = re.compile("^([A-Za-z]+):(.+)$")
 
 
-def valid_graph_data(route):
+def validate_routes(route):
     """
     Validate function for --graphdata command line argument.
     :param route:
@@ -28,7 +28,7 @@ def valid_graph_data(route):
         raise argparse.ArgumentTypeError('Invalid route format for: %s. Should be {A-Z}{A-Z}{0-9}+' % route)
 
 
-def valid_test_case(test_case):
+def validate_test_case(test_case):
     """
     Validate function for --testcases command line argument.
     :param test_case:
@@ -46,6 +46,8 @@ def valid_test_case(test_case):
                 test_case_name, m.group(2)
             ))
         return TestCase(name=test_case_name, args=test_case_args)
+    else:
+        raise argparse.ArgumentTypeError('Invalid test case format: %s.' % test_case)
 
 
 class TestCase:
@@ -282,13 +284,13 @@ if __name__ == '__main__':
                         nargs='+',
                         help='Specify cities and distance as space separated string. E.g. AB5 BC5 CD5',
                         required=True,
-                        type=valid_graph_data)
+                        type=validate_routes)
     parser.add_argument('--testcases',
                         nargs='+',
                         help='List of test cases to perform. See documentation for formatting. Names: %s'
                              % ','.join(TEST_CASE_TYPES.keys()),
                         required=True,
-                        type=valid_test_case)
+                        type=validate_test_case)
 
     args = parser.parse_args()
 
