@@ -112,5 +112,5 @@ Format: "RouteLessThanDistance:C|C|30".
 Here is what should be run to mirror the test cases provided:
 
 ```
-train_routes.py --graphdata AB5 BC4 CD8 DC8 DE6 AD5 CE2 EB3 AE7 --testcases RouteDistance:A-B-C RouteDistance:A-D RouteDistance:A-D-C RouteDistance:A-E-B-C-D RouteDistance:A-E-D RouteLessThanHops:C|C|3 RouteEqualHops:A|C|4 RouteShortest:A|C RouteShortest:B|B RouteLessThanDistance:C|C|30
+python train_routes.py --graphdata AB5 BC4 CD8 DC8 DE6 AD5 CE2 EB3 AE7 --testcases RouteDistance:A-B-C RouteDistance:A-D RouteDistance:A-D-C RouteDistance:A-E-B-C-D RouteDistance:A-E-D RouteLessThanHops:C|C|3 RouteEqualHops:A|C|4 RouteShortest:A|C RouteShortest:B|B RouteLessThanDistance:C|C|30
 ```

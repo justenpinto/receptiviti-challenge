@@ -57,11 +57,11 @@ class TestCase:
 
 
 class TrainRoutes:
-    def __init__(self, **kwargs):
-        self.graph_data = kwargs['graph_data']
+    def __init__(self, graph_data, test_cases):
+        self.graph_data = graph_data
         if isinstance(self.graph_data, str):
             self.graph_data = self.graph_data.split(',')
-        self.test_cases = kwargs['test_cases']
+        self.test_cases = test_cases
 
         self.graph = {}
         self.parse_graph()
@@ -86,7 +86,7 @@ class TrainRoutes:
 
     def get_distance_for_route(self, route):
         """
-        Gets the distance for travelling a route.
+        Gets the distance for travelling a route. Route has already been checked for correctness by input validator.
 
         :param route: a series of cities to visit. Format: A-B-E
         :return:
@@ -99,9 +99,9 @@ class TrainRoutes:
                 start_city = cities[i]
                 end_city = cities[i + 1]
                 total_route_length += self.graph[start_city][end_city]
-            return '%s distance: %d' % (route, total_route_length)
+            return total_route_length
         except:
-            return '%s distance: NO SUCH ROUTE' % route
+            return 'NO SUCH ROUTE'
 
     @staticmethod
     def get_min_distance(distances, unvisited_nodes):
@@ -136,7 +136,14 @@ class TrainRoutes:
 
         We are ignoring creation of the route, as it was not specified in the question. However this could be added
         by including a 'previous' dictionary and reverse walking it to construct the path.
+
+        Returns math.inf is there is no route between cities.
         """
+        if start_city is None or len(start_city) != 1:
+            raise Exception('Invalid start_city: %s' % start_city)
+        if end_city is None or len(end_city) != 1:
+            raise Exception('Invalid end_city: %s' % end_city)
+
         all_nodes = self.graph.keys()
 
         unvisited_nodes = set()
@@ -190,6 +197,11 @@ class TrainRoutes:
         :param equal: Set this to true if we want exact hop matching. False if we want less than or equal to.
         :return:
         """
+        if start_node is None or len(start_node) != 1:
+            raise Exception('Invalid start_city: %s' % start_node)
+        if end_node is None or len(end_node) != 1:
+            raise Exception('Invalid end_city: %s' % end_node)
+
         queue = [(start_node, 0, [])]
         paths = []
         while queue:
@@ -221,6 +233,11 @@ class TrainRoutes:
         :param max_distance: Maximum distance allowed on route.
         :return:
         """
+        if start_node is None or len(start_node) != 1:
+            raise Exception('Invalid start_city: %s' % start_node)
+        if end_node is None or len(end_node) != 1:
+            raise Exception('Invalid end_city: %s' % end_node)
+
         queue = [(start_node, 0, [])]
         paths = []
         while queue:
@@ -249,7 +266,8 @@ class TrainRoutes:
         for test_case in self.test_cases:
             print("Running test case #%d" % count)
             if test_case.name == 'RouteDistance':
-                print(self.get_distance_for_route(test_case.args))
+                distance = self.get_distance_for_route(test_case.args)
+                print('%s distance: %s' % (test_case.args, distance))
             elif test_case.name == 'RouteShortest':
                 args = test_case.args.split('|')
                 shortest_distance = self.find_shortest_path_between_cities(args[0], args[1])
