@@ -114,3 +114,37 @@ Here is what should be run to mirror the test cases provided:
 ```
 python train_routes.py --graphdata AB5 BC4 CD8 DC8 DE6 AD5 CE2 EB3 AE7 --testcases RouteDistance:A-B-C RouteDistance:A-D RouteDistance:A-D-C RouteDistance:A-E-B-C-D RouteDistance:A-E-D RouteLessThanHops:C|C|3 RouteEqualHops:A|C|4 RouteShortest:A|C RouteShortest:B|B RouteLessThanDistance:C|C|30
 ```
+
+The expect output has been slightly modified to be more verbose. Here is the output from the provided test cases:
+
+```
+Running test case #1
+A-B-C distance: 9
+
+Running test case #2
+A-D distance: 5
+
+Running test case #3
+A-D-C distance: 13
+
+Running test case #4
+A-E-B-C-D distance: 22
+
+Running test case #5
+A-E-D distance: NO SUCH ROUTE
+
+Running test case #6
+Paths between C and C with hops less than or equal to 3: 2 (['C-D-C (2 hops)', 'C-E-B-C (3 hops)'])
+
+Running test case #7
+Paths between A and C with hops equal to 4: 3 (['A-B-C-D-C (4 hops)', 'A-D-C-D-C (4 hops)', 'A-D-E-B-C (4 hops)'])
+
+Running test case #8
+Shortest distance between A and C: 9
+
+Running test case #9
+Shortest distance between B and B: 9
+
+Running test case #10
+Paths between C and C with distance less than 30: 7 (['C-D-C (16 distance)', 'C-E-B-C (9 distance)', 'C-D-E-B-C (21 distance)', 'C-D-C-E-B-C (25 distance)', 'C-E-B-C-D-C (25 distance)', 'C-E-B-C-E-B-C (18 distance)', 'C-E-B-C-E-B-C-E-B-C (27 distance)'])
+```
